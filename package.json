@@ -13,9 +13,11 @@
     "gulp": "^3.9.1",
     "gulp-autoprefixer": "^4.1.0",
     "gulp-clean-css": "^3.9.2",
+    "gulp-imagemin": "^4.1.0",
     "gulp-jade": "^1.1.0",
     "gulp-sourcemaps": "^2.6.4",
     "gulp-stylus": "^2.7.0",
+    "gulp-uglify": "^3.0.0",
     "smart-grid": "^2.0.1"
   }
 }

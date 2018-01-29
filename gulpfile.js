@@ -5,10 +5,13 @@ const browserSync = require('browser-sync');
 const autoprefixer = require('gulp-autoprefixer');
 const sourcemaps = require('gulp-sourcemaps');
 const stylus = require('gulp-stylus');
+const imagemin = require('gulp-imagemin');
+const uglify = require('gulp-uglify');
 
 const conf = {
 	src: './src',
 	dist: './dist',
+	libs: '/libs',
 	html: {
 		src: '/**/*.jade',
 		includes: '/includes/*.jade'
@@ -17,8 +20,22 @@ const conf = {
 		src: '/css/**/*.styl',
 		dist: '/css',
 		includes: '/css/**/_*.styl'
+	},
+	js: {
+		src: '/js/**/*.js',
+		dist: '/js'
+	},
+	img: {
+		src: '/img/**/*',
+		dist: '/img'
 	}
 };
+
+gulp.task('watch', ['buildHTML', 'buildCSS', 'browser-sync'], function() {
+	gulp.watch(conf.src + conf.html.src, ['buildHTML']);
+	gulp.watch(conf.src + conf.css.src, ['buildCSS']);
+	gulp.watch(conf.src + conf.js.src, ['buildJS']);
+});
 
 gulp.task('buildHTML', function() {
 	gulp.src(['!' + conf.src + conf.html.includes, conf.src + conf.html.src])
@@ -27,7 +44,7 @@ gulp.task('buildHTML', function() {
 		.pipe(browserSync.reload({
 			stream: true
 		}));
-})
+});
 
 gulp.task('buildCSS', function() {
 	gulp.src(['!' + conf.src + conf.css.includes, conf.src + conf.css.src])
@@ -43,7 +60,16 @@ gulp.task('buildCSS', function() {
 		.pipe(browserSync.reload({
 			stream: true
 		}));
-})
+});
+
+gulp.task('buildJS', function() {
+	gulp.src(conf.src + conf.js.src)
+		.pipe(uglify())
+		.pipe(gulp.dest(conf.dist + conf.js.dist))
+		.pipe(browserSync.reload({
+			stream: true
+		}));
+});
 
 gulp.task('browser-sync', function() {
     browserSync.init({
@@ -53,7 +79,8 @@ gulp.task('browser-sync', function() {
     });
 });
 
-gulp.task('watch', ['buildHTML', 'buildCSS', 'browser-sync'], function() {
-	gulp.watch(conf.src + conf.html.src, ['buildHTML']);
-	gulp.watch(conf.src + conf.css.src, ['buildCSS']);
-})
+gulp.task('imagemin', () =>
+    gulp.src(conf.src + conf.img.src)
+        .pipe(imagemin())
+        .pipe(gulp.dest(conf.dist + conf.img.dist))
+);
